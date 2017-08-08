@@ -26,7 +26,24 @@ FILES = (
 )
 
 
-def upload():
+def simpleupload(service):
+
+    for filename, mimeType in FILES:
+        
+        #Set metadata for each file to be uploaded
+        metadata = {'name': filename}
+        if mimeType:
+            metadata['mimeType'] = mimeType
+
+        #Upload call for each file
+        result = service.files().create(body=metadata, media_body=filename).execute()
+
+        #Print result for each file
+        if result:
+            print ('Sucessful Uploaded "%s" (%s)' % (filename, result['mimeType']))
+
+
+def main():
     """Shows basic usage of the Google Drive API.
     Creates a Google Drive API service object and 
     """
@@ -35,24 +52,7 @@ def upload():
     #Service endpoint
     service = discovery.build('drive', 'v3', http=http)
 
-    #Process result
-    for filename, mimeType in FILES:
-        
-        #Set metadata
-        metadata = {'name': filename}
-        if mimeType:
-            metadata['mimeType'] = mimeType
-
-        #Upload
-        result = service.files().create(body=metadata, media_body=filename).execute()
-
-        #Print result
-        if result:
-            print ('Sucessful Uploaded "%s" (%s)' % (filename, result['mimeType']))
-
-
-def main():
-    upload()
+    simpleupload(service)
 
 
 
