@@ -22,26 +22,14 @@ APPLICATION_NAME = 'Drive API Python Quickstart'
 
 FILES = (
     ('test.txt', None),
-    #Supported mimeTypes List: https://developers.google.com/drive/v3/web/mime-types
     ('test.txt', 'application/vnd.google-apps.document'),
 )
 
 
-def simpleupload(service):
+def simpledownload(service):
 
-    for filename, mimeType in FILES:
-        
-        #Set metadata for each file to be uploaded
-        metadata = {'name': filename}
-        if mimeType:
-            metadata['mimeType'] = mimeType
+    ### To Do
 
-        #Upload call for each file
-        result = service.files().create(body=metadata, media_body=filename).execute()
-
-        #Print result for each file
-        if result:
-            print ('Sucessful Uploaded "%s" (%s)' % (filename, result['mimeType']))
 
 
 def main():
@@ -53,7 +41,7 @@ def main():
     #Service endpoint
     service = discovery.build('drive', 'v3', http=http)
 
-    simpleupload(service)
+    simpledownload(service)
 
 
 

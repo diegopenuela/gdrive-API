@@ -20,28 +20,16 @@ SCOPES = 'https://www.googleapis.com/auth/drive.file'
 CLIENT_SECRET_FILE = 'client_secret.json'
 APPLICATION_NAME = 'Drive API Python Quickstart'
 
-FILES = (
-    ('test.txt', None),
-    #Supported mimeTypes List: https://developers.google.com/drive/v3/web/mime-types
-    ('test.txt', 'application/vnd.google-apps.document'),
-)
 
+def simplecreatefolder(service):
+    file_metadata = {
+    'name' : 'TestInvoices',
+    'mimeType' : 'application/vnd.google-apps.folder'
+    }
 
-def simpleupload(service):
+    file = service.files().create(body=file_metadata, fields='id').execute()
+    print ('Creation Sucessful - Folder ID: "%s"' % file.get('id'))
 
-    for filename, mimeType in FILES:
-        
-        #Set metadata for each file to be uploaded
-        metadata = {'name': filename}
-        if mimeType:
-            metadata['mimeType'] = mimeType
-
-        #Upload call for each file
-        result = service.files().create(body=metadata, media_body=filename).execute()
-
-        #Print result for each file
-        if result:
-            print ('Sucessful Uploaded "%s" (%s)' % (filename, result['mimeType']))
 
 
 def main():
@@ -53,7 +41,7 @@ def main():
     #Service endpoint
     service = discovery.build('drive', 'v3', http=http)
 
-    simpleupload(service)
+    simplecreatefolder(service)
 
 
 
