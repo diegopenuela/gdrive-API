@@ -20,6 +20,41 @@ SCOPES = 'https://www.googleapis.com/auth/drive.file'
 CLIENT_SECRET_FILE = 'client_secret.json'
 APPLICATION_NAME = 'Drive API Python Quickstart'
 
+FILES = (
+    ('test.txt', None),
+    ('test.txt', 'application/vnd.google-apps.document'),
+)
+
+
+def upload():
+    """Shows basic usage of the Google Drive API.
+    Creates a Google Drive API service object and 
+    """
+    credentials = get_credentials()
+    http = credentials.authorize(httplib2.Http())
+    #Service endpoint
+    service = discovery.build('drive', 'v3', http=http)
+
+    #Process result
+    for filename, mimeType in FILES:
+        
+        #Set metadata
+        metadata = {'name': filename}
+        if mimeType:
+            metadata['mimeType'] = mimeType
+
+        #Upload
+        result = service.files().create(body=metadata, media_body=filename).execute()
+
+        #Print result
+        if result:
+            print ('Sucessful Uploaded "%s" (%s)' % (filename, result['mimeType']))
+
+
+def main():
+    upload()
+
+
 
 def get_credentials():
     """Gets valid user credentials from storage.
@@ -48,26 +83,7 @@ def get_credentials():
             credentials = tools.run(flow, store)
         print('Storing credentials to ' + credential_path)
     return credentials
-
-def main():
-    """Shows basic usage of the Google Drive API.
-
-    Creates a Google Drive API service object and outputs the names and IDs
-    for up to 10 files.
-    """
-    credentials = get_credentials()
-    http = credentials.authorize(httplib2.Http())
-    service = discovery.build('drive', 'v3', http=http)
-
-    results = service.files().list(
-        pageSize=10,fields="nextPageToken, files(id, name)").execute()
-    items = results.get('files', [])
-    if not items:
-        print('No files found.')
-    else:
-        print('Files:')
-        for item in items:
-            print('{0} ({1})'.format(item['name'], item['id']))
+    
 
 if __name__ == '__main__':
     main()
