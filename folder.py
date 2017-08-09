@@ -20,15 +20,35 @@ SCOPES = 'https://www.googleapis.com/auth/drive.file'
 CLIENT_SECRET_FILE = 'client_secret.json'
 APPLICATION_NAME = 'Drive API Python Quickstart'
 
-
-def simplecreatefolder(service):
+#Create a folder in root Drive
+def simple_create_folder(service):
     file_metadata = {
-    'name' : 'TestInvoices',
-    'mimeType' : 'application/vnd.google-apps.folder'
+        'name' : 'TestInvoices',
+        'mimeType' : 'application/vnd.google-apps.folder'
     }
 
     file = service.files().create(body=file_metadata, fields='id').execute()
-    print ('Creation Sucessful - Folder ID: "%s"' % file.get('id'))
+
+    folder_id = file.get('id')
+    print ('Creation Sucessful - Folder ID: "%s"' % folder_id)
+
+    insert_file_folder(service, folder_id)
+
+
+#Upload a file in a specific folder (based on folder ID)
+def insert_file_folder(service, f_id):
+    folder_id = f_id
+    filename = 'invoice.pdf'
+
+    file_metadata = {
+        'name' : filename,
+        'parents': [ folder_id ],
+        'mimeType' : 'application/pdf'
+    }
+
+    file = service.files().create(body=file_metadata, media_body=filename).execute()
+
+    print ('Sucessful Upload - File ID: "%s"' % file.get('id'))
 
 
 
@@ -41,7 +61,7 @@ def main():
     #Service endpoint
     service = discovery.build('drive', 'v3', http=http)
 
-    simplecreatefolder(service)
+    simple_create_folder(service)
 
 
 
